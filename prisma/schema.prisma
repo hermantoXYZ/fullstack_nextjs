@@ -1,0 +1,26 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model BlogPost {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  author    String   @db.VarChar(100)
+  createdAt DateTime @default(now())
+  categoryId Int     // Foreign key for Category
+  category  Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id        Int        @id @default(autoincrement()) // Auto-incrementing ID
+  name      String     @unique                       // Unique category name
+  slugs      String     @unique                       // Unique slug for SEO-friendly URLs
+  createdAt DateTime   @default(now())               // Timestamp for when the category is created
+  updatedAt DateTime   @updatedAt                    // Auto-updates on change
+  posts     BlogPost[] // Relation field
+}
